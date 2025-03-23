@@ -50,22 +50,48 @@ const ReportPreview: React.FC = () => {
     } else if (data.status === "normal") {
       return <p>{title}: Normal</p>;
     } else {
+      // Get vital signs or assessments as an array of values
+      const detailsArray =
+        system === "respiratory" || system === "cardiovascular"
+          ? Object.values(data.vitalSigns || {}).filter(Boolean)
+          : Object.values(data.assessments || {}).filter(Boolean);
+
+      // If no data is entered, show a simple message
+      if (
+        data.symptoms.length === 0 &&
+        detailsArray.length === 0 &&
+        !data.notes
+      ) {
+        return (
+          <div className="mb-3">
+            <p className="font-semibold text-blue-700">{title}</p>
+            <p>Abnormal - No specific details provided</p>
+          </div>
+        );
+      }
+
       return (
         <div className="mb-3">
           <p className="font-semibold text-blue-700">{title}</p>
           <ul className="list-disc pl-5 space-y-1">
-            {data.symptoms.length > 0 &&
-              data.symptoms.map((symptom, index) => (
-                <li key={index}>{symptom}</li>
-              ))}
+            {/* Show symptoms first */}
+            {data.symptoms.map((symptom, index) => (
+              <li key={`symptom-${index}`}>{symptom}</li>
+            ))}
+
+            {/* Show vital signs or assessments */}
             {system === "respiratory" || system === "cardiovascular"
               ? Object.entries(data.vitalSigns || {}).map(
-                  ([key, value]) => value && <li key={key}>{value}</li>,
+                  ([key, value]) =>
+                    value && <li key={`vital-${key}`}>{value}</li>,
                 )
               : Object.entries(data.assessments || {}).map(
-                  ([key, value]) => value && <li key={key}>{value}</li>,
+                  ([key, value]) =>
+                    value && <li key={`assess-${key}`}>{value}</li>,
                 )}
-            {data.notes && <li>{data.notes}</li>}
+
+            {/* Show notes if any */}
+            {data.notes && <li key="notes">{data.notes}</li>}
           </ul>
         </div>
       );
@@ -140,6 +166,19 @@ const ReportPreview: React.FC = () => {
     }
   };
 
+  // Force re-render when data changes
+  React.useEffect(() => {
+    // This empty dependency array effect will run once on mount
+    // The component will re-render whenever any of the store values change
+  }, [
+    patientInfo,
+    subjectiveData,
+    objectiveData,
+    assessmentData,
+    planningData,
+    interventionData,
+  ]);
+
   return (
     <Card className="w-full bg-white shadow-sm">
       <CardHeader className="bg-blue-50 border-b">
@@ -153,10 +192,14 @@ const ReportPreview: React.FC = () => {
           <h3 className="text-md font-semibold mb-2 text-blue-700">
             Handover Information
           </h3>
-          <p>
-            <strong>Received from:</strong> {patientInfo.receivedFrom.role}{" "}
-            {patientInfo.receivedFrom.name}
-          </p>
+          {patientInfo.receivedFrom.role || patientInfo.receivedFrom.name ? (
+            <p>
+              <strong>Received from:</strong> {patientInfo.receivedFrom.role}{" "}
+              {patientInfo.receivedFrom.name}
+            </p>
+          ) : (
+            <p>No handover information provided</p>
+          )}
         </div>
 
         <div>
