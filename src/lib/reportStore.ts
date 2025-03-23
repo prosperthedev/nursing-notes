@@ -42,31 +42,37 @@ const initialObjectiveData: ObjectiveData = {
     status: "not-assessed",
     notes: "",
     symptoms: [],
+    vitalSigns: {},
   },
   cardiovascular: {
     status: "not-assessed",
     notes: "",
     symptoms: [],
+    vitalSigns: {},
   },
   cns: {
     status: "not-assessed",
     notes: "",
     symptoms: [],
+    assessments: {},
   },
   git: {
     status: "not-assessed",
     notes: "",
     symptoms: [],
+    assessments: {},
   },
   renal: {
     status: "not-assessed",
     notes: "",
     symptoms: [],
+    assessments: {},
   },
   skin: {
     status: "not-assessed",
     notes: "",
     symptoms: [],
+    assessments: {},
   },
 };
 

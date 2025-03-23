@@ -46,17 +46,35 @@ const ExportOptions: React.FC = () => {
     ) => {
       const data = objectiveData[system];
       if (data.status === "not-assessed") {
-        return `${title}: Not assessed`;
+        return `${title}\n- Not assessed`;
       } else if (data.status === "normal") {
-        return `${title}: Normal`;
+        return `${title}\n- Normal`;
       } else {
-        let text = `${title}: Abnormal\n`;
+        let text = `${title}\n`;
+
+        // Add symptoms as bullet points
         if (data.symptoms.length > 0) {
-          text += `Findings: ${data.symptoms.join(", ")}\n`;
+          data.symptoms.forEach((symptom) => {
+            text += `- ${symptom}\n`;
+          });
         }
+
+        // Add vital signs or assessments as bullet points
+        if (system === "respiratory" || system === "cardiovascular") {
+          Object.entries(data.vitalSigns || {}).forEach(([key, value]) => {
+            if (value) text += `- ${value}\n`;
+          });
+        } else {
+          Object.entries(data.assessments || {}).forEach(([key, value]) => {
+            if (value) text += `- ${value}\n`;
+          });
+        }
+
+        // Add notes as a bullet point
         if (data.notes) {
-          text += data.notes;
+          text += `- ${data.notes}\n`;
         }
+
         return text;
       }
     };

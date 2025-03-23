@@ -51,16 +51,22 @@ const ReportPreview: React.FC = () => {
       return <p>{title}: Normal</p>;
     } else {
       return (
-        <div>
-          <p>
-            <strong>{title}:</strong> Abnormal
-          </p>
-          {data.symptoms.length > 0 && (
-            <p>
-              <strong>Findings:</strong> {data.symptoms.join(", ")}
-            </p>
-          )}
-          {data.notes && <p>{data.notes}</p>}
+        <div className="mb-3">
+          <p className="font-semibold text-blue-700">{title}</p>
+          <ul className="list-disc pl-5 space-y-1">
+            {data.symptoms.length > 0 &&
+              data.symptoms.map((symptom, index) => (
+                <li key={index}>{symptom}</li>
+              ))}
+            {system === "respiratory" || system === "cardiovascular"
+              ? Object.entries(data.vitalSigns || {}).map(
+                  ([key, value]) => value && <li key={key}>{value}</li>,
+                )
+              : Object.entries(data.assessments || {}).map(
+                  ([key, value]) => value && <li key={key}>{value}</li>,
+                )}
+            {data.notes && <li>{data.notes}</li>}
+          </ul>
         </div>
       );
     }

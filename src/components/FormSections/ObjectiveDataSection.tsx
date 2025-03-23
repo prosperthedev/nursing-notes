@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 interface ObjectiveDataSectionProps {
   onDataChange?: (data: ObjectiveData) => void;
@@ -22,6 +23,13 @@ export interface ObjectiveData {
       respirationRate?: string;
       oxygenSaturation?: string;
       oxygenDelivery?: string;
+      ventilationMode?: string;
+      ettSize?: string;
+      fiO2?: string;
+      peep?: string;
+      tidalVolume?: string;
+      secretions?: string;
+      coughReflex?: string;
     };
   };
   cardiovascular: {
@@ -32,6 +40,9 @@ export interface ObjectiveData {
       bloodPressure?: string;
       heartRate?: string;
       rhythm?: string;
+      capillaryRefill?: string;
+      vasoactiveSupport?: string;
+      peripheralPerfusion?: string;
     };
   };
   cns: {
@@ -42,6 +53,9 @@ export interface ObjectiveData {
       gcs?: string;
       pupils?: string;
       motorResponse?: string;
+      sedation?: string;
+      rass?: string;
+      painScore?: string;
     };
   };
   git: {
@@ -51,6 +65,10 @@ export interface ObjectiveData {
     assessments: {
       bowelSounds?: string;
       lastBowelMovement?: string;
+      abdomen?: string;
+      feeding?: string;
+      ngt?: string;
+      nutritionalStatus?: string;
     };
   };
   renal: {
@@ -60,6 +78,9 @@ export interface ObjectiveData {
     assessments: {
       urineOutput?: string;
       urineColor?: string;
+      catheter?: string;
+      fluidBalance?: string;
+      edema?: string;
     };
   };
   skin: {
@@ -70,6 +91,9 @@ export interface ObjectiveData {
       color?: string;
       temperature?: string;
       turgor?: string;
+      wounds?: string;
+      pressureAreas?: string;
+      lines?: string;
     };
   };
 }
@@ -128,6 +152,10 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
       "Accessory muscle use",
       "Nasal flaring",
       "Barrel chest",
+      "Mechanically ventilated",
+      "Symmetrical chest expansion",
+      "Minimal secretions",
+      "Fair cough reflex",
     ],
     cardiovascular: [
       "Tachycardia",
@@ -141,6 +169,9 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
       "Murmur",
       "Cyanosis",
       "Capillary refill >3s",
+      "Vasoactive support",
+      "Poor peripheral perfusion",
+      "Unstable blood pressure",
     ],
     cns: [
       "Altered consciousness",
@@ -154,6 +185,8 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
       "Dysarthria",
       "Ataxia",
       "Tremor",
+      "Sedated",
+      "Unresponsive to stimuli",
     ],
     git: [
       "Abdominal distention",
@@ -166,6 +199,9 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
       "Melena",
       "Hematemesis",
       "Jaundice",
+      "NGT in situ",
+      "Soft abdomen",
+      "Not feeding",
     ],
     renal: [
       "Oliguria",
@@ -177,6 +213,9 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
       "Flank pain",
       "Cloudy urine",
       "Foul-smelling urine",
+      "Catheter in situ",
+      "Minimal urine output",
+      "Edema",
     ],
     skin: [
       "Rash",
@@ -190,6 +229,8 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
       "Diaphoresis",
       "Poor turgor",
       "Bruising",
+      "Central line in situ",
+      "Arterial line in situ",
     ],
   };
 
@@ -197,14 +238,49 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
   const assessmentFields = {
     respiratory: [
       {
+        key: "ventilationMode",
+        label: "Ventilation Mode",
+        placeholder: "e.g., VC/AC mode via cuffed ETT",
+      },
+      {
+        key: "ettSize",
+        label: "ETT Size/Position",
+        placeholder: "e.g., size 6.5 tied at 22cm RAM",
+      },
+      {
+        key: "fiO2",
+        label: "FiO2",
+        placeholder: "e.g., 60%",
+      },
+      {
+        key: "tidalVolume",
+        label: "Tidal Volume",
+        placeholder: "e.g., 420mls",
+      },
+      {
         key: "respirationRate",
         label: "Respiration Rate",
-        placeholder: "e.g., 16 breaths/min",
+        placeholder: "e.g., RR 35",
+      },
+      {
+        key: "peep",
+        label: "PEEP",
+        placeholder: "e.g., PEEP 5 and Pmax 40",
       },
       {
         key: "oxygenSaturation",
         label: "Oxygen Saturation",
-        placeholder: "e.g., 98% on RA",
+        placeholder: "e.g., Saturates well at 95%",
+      },
+      {
+        key: "secretions",
+        label: "Secretions",
+        placeholder: "e.g., Minimal whitish tracheal secretions",
+      },
+      {
+        key: "coughReflex",
+        label: "Cough Reflex",
+        placeholder: "e.g., Fair cough reflex",
       },
       {
         key: "oxygenDelivery",
@@ -214,43 +290,121 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
     ],
     cardiovascular: [
       {
-        key: "bloodPressure",
-        label: "Blood Pressure",
-        placeholder: "e.g., 120/80 mmHg",
+        key: "vasoactiveSupport",
+        label: "Vasoactive Support",
+        placeholder: "e.g., Noradrenaline at 0.5mcg/kg/min",
       },
       {
         key: "heartRate",
         label: "Heart Rate",
-        placeholder: "e.g., 72 bpm, regular",
+        placeholder: "e.g., HR elevated at 180-200b/min",
       },
-      { key: "rhythm", label: "Rhythm", placeholder: "e.g., Regular, NSR" },
+      {
+        key: "bloodPressure",
+        label: "Blood Pressure",
+        placeholder: "e.g., BP unstable at 107/30mmHg",
+      },
+      {
+        key: "peripheralPerfusion",
+        label: "Peripheral Perfusion",
+        placeholder: "e.g., Poor capillary refill of extremities",
+      },
+      {
+        key: "rhythm",
+        label: "Rhythm",
+        placeholder: "e.g., Regular, NSR",
+      },
+      {
+        key: "capillaryRefill",
+        label: "Capillary Refill",
+        placeholder: "e.g., <3 seconds",
+      },
     ],
     cns: [
-      { key: "gcs", label: "GCS", placeholder: "e.g., 15/15" },
-      { key: "pupils", label: "Pupils", placeholder: "e.g., PEARL 3mm" },
+      {
+        key: "sedation",
+        label: "Sedation",
+        placeholder: "e.g., Sedated on Fentanyl and Midazolam",
+      },
       {
         key: "motorResponse",
         label: "Motor Response",
-        placeholder: "e.g., 5/5 all extremities",
+        placeholder: "e.g., Unresponsive to painful stimuli",
+      },
+      {
+        key: "pupils",
+        label: "Pupils",
+        placeholder: "e.g., Pupils at 3mm each and reactive to light",
+      },
+      {
+        key: "rass",
+        label: "RASS Score",
+        placeholder: "e.g., RASS -4",
+      },
+      {
+        key: "gcs",
+        label: "GCS",
+        placeholder: "e.g., GCS 3",
+      },
+      {
+        key: "painScore",
+        label: "Pain Score",
+        placeholder: "e.g., Pain score 0/10",
       },
     ],
     git: [
+      {
+        key: "ngt",
+        label: "NGT Status",
+        placeholder:
+          "e.g., NGT in situ, draining dark-brownish gastric aspirates",
+      },
+      {
+        key: "feeding",
+        label: "Feeding Status",
+        placeholder: "e.g., Currently not feeding",
+      },
+      {
+        key: "abdomen",
+        label: "Abdomen",
+        placeholder: "e.g., Abdomen soft and non-distended",
+      },
+      {
+        key: "nutritionalStatus",
+        label: "Nutritional Status",
+        placeholder: "e.g., Good nutritional status",
+      },
+      {
+        key: "lastBowelMovement",
+        label: "Bowel Movement",
+        placeholder: "e.g., No bowel motion reported",
+      },
       {
         key: "bowelSounds",
         label: "Bowel Sounds",
         placeholder: "e.g., Active in all 4 quadrants",
       },
-      {
-        key: "lastBowelMovement",
-        label: "Last Bowel Movement",
-        placeholder: "e.g., Today, formed",
-      },
     ],
     renal: [
       {
+        key: "catheter",
+        label: "Catheter Status",
+        placeholder: "e.g., Urethral catheter in situ",
+      },
+      {
         key: "urineOutput",
         label: "Urine Output",
-        placeholder: "e.g., 50ml/hr",
+        placeholder: "e.g., Drains very minimal to no urine",
+      },
+      {
+        key: "edema",
+        label: "Edema",
+        placeholder: "e.g., No noted edema of extremities",
+      },
+      {
+        key: "fluidBalance",
+        label: "Fluid Balance",
+        placeholder: "e.g., On RL at 41mls/hr",
       },
       {
         key: "urineColor",
@@ -259,9 +413,36 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
       },
     ],
     skin: [
-      { key: "color", label: "Color", placeholder: "e.g., Pink" },
-      { key: "temperature", label: "Temperature", placeholder: "e.g., Warm" },
-      { key: "turgor", label: "Turgor", placeholder: "e.g., Good, <3 seconds" },
+      {
+        key: "lines",
+        label: "Lines/Access",
+        placeholder: "e.g., CVC on right internal jugular, clean and intact",
+      },
+      {
+        key: "pressureAreas",
+        label: "Pressure Areas",
+        placeholder: "e.g., Grade 2 pressure ulcers on both heels",
+      },
+      {
+        key: "wounds",
+        label: "Wounds",
+        placeholder: "e.g., Surgical wound clean and dry",
+      },
+      {
+        key: "color",
+        label: "Color",
+        placeholder: "e.g., Pink",
+      },
+      {
+        key: "temperature",
+        label: "Temperature",
+        placeholder: "e.g., Warm",
+      },
+      {
+        key: "turgor",
+        label: "Turgor",
+        placeholder: "e.g., Good, <3 seconds",
+      },
     ],
   };
 
@@ -378,10 +559,10 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
             >
               {field.label}:
             </Label>
-            <Textarea
+            <Input
               id={`${system}-${field.key}`}
               placeholder={field.placeholder}
-              className="h-10 py-2"
+              className="h-10"
               value={values[field.key as keyof typeof values] || ""}
               onChange={(e) =>
                 handleAssessmentChange(system, field.key, e.target.value)
@@ -430,54 +611,54 @@ const ObjectiveDataSection: React.FC<ObjectiveDataSectionProps> = ({
           </RadioGroup>
 
           {/* Always show assessment fields regardless of status */}
-          {renderAssessmentFields(system)}
+          <div className="mb-4">
+            <p className="text-sm font-medium mb-2">
+              {system === "respiratory" || system === "cardiovascular"
+                ? "Vital Signs:"
+                : "Assessment:"}
+            </p>
+            {renderAssessmentFields(system)}
+          </div>
 
-          {objectiveData[system].status === "abnormal" && (
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm font-medium mb-2">
-                  Common findings (select all that apply):
-                </p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {symptomsBySystem[system].map((symptom) => (
-                    <div key={symptom} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`${system}-${symptom}`}
-                        checked={objectiveData[system].symptoms.includes(
-                          symptom,
-                        )}
-                        onCheckedChange={() =>
-                          handleSymptomToggle(system, symptom)
-                        }
-                      />
-                      <Label
-                        htmlFor={`${system}-${symptom}`}
-                        className="text-sm"
-                      >
-                        {symptom}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <Label
-                  htmlFor={`${system}-notes`}
-                  className="text-sm font-medium"
-                >
-                  Additional notes:
-                </Label>
-                <Textarea
-                  id={`${system}-notes`}
-                  placeholder={`Enter additional ${title.toLowerCase()} findings here...`}
-                  className="mt-1"
-                  value={objectiveData[system].notes}
-                  onChange={(e) => handleNotesChange(system, e.target.value)}
-                />
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm font-medium mb-2">
+                Common findings (select all that apply):
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {symptomsBySystem[system].map((symptom) => (
+                  <div key={symptom} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`${system}-${symptom}`}
+                      checked={objectiveData[system].symptoms.includes(symptom)}
+                      onCheckedChange={() =>
+                        handleSymptomToggle(system, symptom)
+                      }
+                    />
+                    <Label htmlFor={`${system}-${symptom}`} className="text-sm">
+                      {symptom}
+                    </Label>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
+
+            <div>
+              <Label
+                htmlFor={`${system}-notes`}
+                className="text-sm font-medium"
+              >
+                Additional notes:
+              </Label>
+              <Textarea
+                id={`${system}-notes`}
+                placeholder={`Enter additional ${title.toLowerCase()} findings here...`}
+                className="mt-1"
+                value={objectiveData[system].notes}
+                onChange={(e) => handleNotesChange(system, e.target.value)}
+              />
+            </div>
+          </div>
         </Card>
       </TabsContent>
     );
